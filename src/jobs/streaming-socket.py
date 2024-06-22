@@ -39,43 +39,48 @@ def send_data_to_socket(file_path, host="127.0.0.1", port=9999, chunk_size=2):
 
     print('Server listening for incoming connections on the host:', host, 'and port:', port)    
 
-    conn, add = s.accept()
-
-    print('Connected from address:', add)
-
     last_sent_index = 0
-    # open the file in read mode
-    try:
-        with open(file_path, 'r') as file:
-            # skip the lines that are already read
-            for _ in range(last_sent_index):
-                next(file)
-            
-            records = []
 
-            for line in file:
-                records.append(json.loads(line))
-                if len(records) == chunk_size:
-                    chunk = pd.DataFrame(records)
-                    print(chunk)
-                    for record in chunk.to_dict(orient='records'):
-                        serialized_data = json.dumps(record).encode('utf-8')
-                        conn.send(serialized_data + b'\n') # circuit will wait for b'\n' to know that the data is complete
-                        # Then it will process the data and send the response back to the client.
-                        time.sleep(5)
-                        last_sent_index += 1
+    while True: # loop to keep the server running
 
-                    records = [] # clear the records list after sending the data in the chunk
-    except (BrokenPipeError, ConnectionResetError):
-        print('Connection closed by the client')
-    finally:
-        conn.close()
-        print('Connection closed by the server')
-        s.close()
+        conn, add = s.accept() # accept the connection from the client evertime
+                               # previous connection gets closed automatically.
+
+        print(f'Connected from address: {add}') # print the address of the client
+
+        # open the file in read mode
+        try:
+            with open(file_path, 'r') as file:
+                # skip the lines that are already read
+                for _ in range(last_sent_index):
+                    next(file) # for loop used to skip the lines that are already read
+                
+                records = [] # create a list to hold records
+
+                for line in file:
+                    records.append(json.loads(line)) # append each line to the records list
+                    if len(records) == chunk_size: # check if the size of the records list equals the chunk size
+                        chunk = pd.DataFrame(records) # convert the records list to a DataFrame
+                        print(chunk) # print the chunk
+                        for record in chunk.to_dict(orient='records'): # convert the DataFrame to a dictionary
+                            serialized_data = json.dumps(record).encode('utf-8') # serialize the record to JSON
+                            conn.send(serialized_data + b'\n') # circuit will wait for b'\n' to know that the data is complete
+                            # Then it will process the data and send the response back to the client.
+                            time.sleep(5)
+                            last_sent_index += 1
+
+                        records = [] # clear the records list after sending the data in the chunk
+        except (BrokenPipeError, ConnectionResetError):
+            print('Connection closed by the client')
+        finally:
+            conn.close()
+            print('Connection closed by the server')
+            s.close()
 
 
 if __name__ == '__main__':
     send_data_to_socket(file_path='../datasets/yelp_academic_dataset_review.json')
+
 
 
 # Steps
