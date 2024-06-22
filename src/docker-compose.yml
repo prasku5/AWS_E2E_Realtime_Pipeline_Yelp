@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  spark-master:
+    container_name: spark-master
+    hostname: spark-master
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
+    command: bin/spark-class org.apache.spark.deploy.master.Master
+    volumes:
+      - ./config:/opt/bitnami/spark/config
+      - ./jobs:/opt/bitnami/spark/jobs
+      - ./datasets:/opt/bitnami/spark/datasets
+      - ./requirements.txt:/requirements.txt
+    ports:
+      - "8085:8080"  # Change to avoid conflict with Airflow
+      - "7077:7077"
+    networks:
+      - spark-network
+
+  spark-worker: &worker
+    container_name: spark-worker
+    hostname: spark-worker
+    build:
+      context: .
+      dockerfile: Dockerfile.spark
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    volumes:
+      - ./config:/opt/bitnami/spark/config
+      - ./jobs:/opt/bitnami/spark/jobs
+      - ./datasets:/opt/bitnami/spark/datasets
+      - ./requirements.txt:/requirements.txt
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+    ports:
+      - "8086:8081"  # Change to avoid conflict with other services
+    networks:
+      - spark-network
+
+#  spark-worker-2:
+#    <<: *worker
+#
+#  spark-worker-3:
+#    <<: *worker
+#
+#  spark-worker-4:
+#    <<: *worker
+networks:
+  spark-network:
+    driver: bridge

@@ -1,0 +1,5 @@
+# ignore following folders
+
+/aws_realtime_spark
+.env
+/src/config/config.py
