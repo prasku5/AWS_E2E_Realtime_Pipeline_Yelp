@@ -1,6 +1,7 @@
 import json
 import socket
 import time
+import pandas as pd
 
 # send data to the socket
 
@@ -63,12 +64,18 @@ def send_data_to_socket(file_path, host="127.0.0.1", port=9999, chunk_size=2):
                         # Then it will process the data and send the response back to the client.
                         time.sleep(5)
                         last_sent_index += 1
+
+                    records = [] # clear the records list after sending the data in the chunk
     except (BrokenPipeError, ConnectionResetError):
         print('Connection closed by the client')
     finally:
         conn.close()
         print('Connection closed by the server')
         s.close()
+
+
+if __name__ == '__main__':
+    send_data_to_socket(file_path='../datasets/yelp_academic_dataset_review.json')
 
 
 # Steps

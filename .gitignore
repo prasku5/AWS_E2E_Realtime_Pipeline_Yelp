@@ -3,3 +3,4 @@
 /aws_realtime_spark
 .env
 /src/config/config.py
+src/datasets/yelp_academic_dataset_review.json
