@@ -20,7 +20,7 @@ def start_streaming(spark):
                     StructField("date", StringType()),
                     StructField("text", StringType())
                 ])
-        
+        # StructType is a collection of StructField.
         # Since the socket stream is a continuous stream of data, we need to parse the data into a DataFrame.
         # currently stream_df is a DataFrame with a single column named value. we need to parse the data into a DataFrame with the specified schema.
         stream_df = stream_df.select(from_json(col("value"), schema).alias("data")).select("data.*")
