@@ -4,12 +4,18 @@ import time
 import pandas as pd
 import os
 
+
+def handle_date(obj):
+    if isinstance(obj, pd.Timestamp):
+        return obj.strftime('%Y-%m-%d %H:%M:%S')
+    raise TypeError("Object of type '%s' is not JSON serializable" % type(obj).__name__)
+
 # send data to the socket
 
 # Host is the IP address of the server
 # Port is the port number on the server
 # Chunk size is the number of bytes to send at a time to the server
-def send_data_to_socket(file_path, host="spark-master", port=9999, chunk_size=2):
+def send_data_to_socket(file_path, host="127.0.0.1", port=9999, chunk_size=2):
     '''
         docstring: 
             Send data to the socket
@@ -64,7 +70,7 @@ def send_data_to_socket(file_path, host="spark-master", port=9999, chunk_size=2)
                         chunk = pd.DataFrame(records) # convert the records list to a DataFrame
                         print(chunk) # print the chunk
                         for record in chunk.to_dict(orient='records'): # convert the DataFrame to a dictionary
-                            serialized_data = json.dumps(record).encode('utf-8') # serialize the record to JSON
+                            serialized_data = json.dumps(record, default=handle_date).encode('utf-8') # serialize the record to JSON
                             conn.send(serialized_data + b'\n') # circuit will wait for b'\n' to know that the data is complete
                             # Then it will process the data and send the response back to the client.
                             time.sleep(5)
@@ -79,9 +85,10 @@ def send_data_to_socket(file_path, host="spark-master", port=9999, chunk_size=2)
             print('Connection closed by the server')
 
 if __name__ == '_   _main__':
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_dir, '../datasets/yelp_academic_dataset_review.json')
-    send_data_to_socket(file_path=file_path)
+    # current_dir = os.path.dirname(os.path.abspath(__file__))
+    # file_path = os.path.join(current_dir, '../datasets/yelp_academic_dataset_review.json')
+    # send_data_to_socket(file_path=file_path)
+    send_data_over_socket("datasets/yelp_academic_dataset_review.json")
 
 # Steps
 
