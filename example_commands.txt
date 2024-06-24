@@ -1,0 +1,33 @@
+# To build the docker with latest packages we instaled using the pip package
+docker compose up -d --build
+
+# To activate the environment 
+source aws_realtime_spark/bin/activate
+
+
+#To run the spark streaming socked in the spark master we will go in to shell
+
+docker exec -it spark-master /bin/bash
+list the jobs - ls (with in the jobs folder)
+we will run using python - python3 jobs/streaming-socket.py
+
+we will get below statement after execution of previous code 
+
+Server listening for incoming connections on the host: 127.0.0.1 and port: 9999
+
+Now we can submit the job from the spark-worker
+
+docker exec -it spark-worker spark-submit \
+--master spark://172.22.0.2:7077 \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+jobs/spark-streaming.py
+
+
+
+
+docker exec -it spark-master /bin/bash
+
+docker exec -it spark-master spark-submit \
+--master spark://172.22.0.2:7077 \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+jobs/spark-streaming.py

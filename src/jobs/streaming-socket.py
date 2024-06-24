@@ -2,13 +2,14 @@ import json
 import socket
 import time
 import pandas as pd
+import os
 
 # send data to the socket
 
 # Host is the IP address of the server
 # Port is the port number on the server
 # Chunk size is the number of bytes to send at a time to the server
-def send_data_to_socket(file_path, host="127.0.0.1", port=9999, chunk_size=2):
+def send_data_to_socket(file_path, host="spark-master", port=9999, chunk_size=2):
     '''
         docstring: 
             Send data to the socket
@@ -70,18 +71,17 @@ def send_data_to_socket(file_path, host="127.0.0.1", port=9999, chunk_size=2):
                             last_sent_index += 1
 
                         records = [] # clear the records list after sending the data in the chunk
+
         except (BrokenPipeError, ConnectionResetError):
             print('Connection closed by the client')
-        finally:
+        finally:    
             conn.close()
             print('Connection closed by the server')
-            s.close()
 
-
-if __name__ == '__main__':
-    send_data_to_socket(file_path='../datasets/yelp_academic_dataset_review.json')
-
-
+if __name__ == '_   _main__':
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_dir, '../datasets/yelp_academic_dataset_review.json')
+    send_data_to_socket(file_path=file_path)
 
 # Steps
 
