@@ -25,3 +25,66 @@ docker exec -it spark-master spark-submit \ < <------------------- This is worki
 --master spark://172.18.0.2:7077 \
 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \ 
 jobs/spark-streaming.py
+
+
+
+result after sentiment analysis using open ai
+{
+  "review_id": "pgESDcC7eDx4z_epqon4_Q",
+  "user_id": "KhAqHRXgVhSClw_Y2ayEqg",
+  "business_id": "plobBsTtVUODb353xxFT_g",
+  "stars": "1.0",
+  "date": "2014-10-27 01:53:24",
+  "text": "Came for all-you-can-eat, and ended up waiting for over half an hour to get our order in. The servers completely ignored us, while taking orders from the tables around us. And on top of that, all of the rolls contain \"extras\" not listed on the menu. One roll surprised us by having sweet mustard sauce on it, which did NOT taste very good....\nOn the bright side, once we actually got our orders in they didn't take all that long to make them.",
+  "feedback": "NEGATIVE"
+}
+
+{
+  "review_id": "Gyw77tgrqdHnDBI6WfFjMw",
+  "user_id": "JYxJUad4GtKZdZhoTXTKZw",
+  "business_id": "qLrTiIPDlnNX6FYTs29rmg",
+  "stars": "3.0",
+  "date": "2009-10-13 19:50:52",
+  "text": "I actually eat here at least once a month . The food is good and the service compliments it. You will fall in love with there zucchini muffins. I always leave with some stashed in my purse, you know for later. The prices are cheap and they have a fantastic frozen yogurt bar . with unlimited toppings. Have fun !! yum yum",
+  "feedback": "POSITIVE"
+}
+
+
+schema for topic (yelp-reviews)
+
+{
+  "doc": "Schema for customer reviews",
+  "fields": [
+    {
+      "name": "review_id",
+      "type": "string"
+    },
+    {
+      "name": "user_id",
+      "type": "string"
+    },
+    {
+      "name": "business_id",
+      "type": "string"
+    },
+    {
+      "name": "stars",
+      "type": "float"
+    },
+    {
+      "name": "date",
+      "type": "string"
+    },
+    {
+      "name": "text",
+      "type": "string"
+    },
+    {
+      "name": "feedback",
+      "type": "string"
+    }
+  ],
+  "name": "yelp_reviews_schema",
+  "namespace": "com.airscholar",
+  "type": "record"
+}

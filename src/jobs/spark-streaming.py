@@ -3,17 +3,18 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, to_json, struct, udf, when
 from pyspark.sql.types import StructType, StructField, StringType, FloatType
 from config.config import config
-import openai
 from time import sleep
+import openai
 import os
 import sys 
 
 def sentiment_analysis(comment) -> str: # function to perform sentiment analysis
     if comment:
-        openai.api_key = config['openai']['api_key']  # set the API key
-        completion = openai.ChatCompletion.create( # create a chat completion
-            model='gpt-4o', # specify the model to use
-            messages = [ # specify the messages to send
+       if comment:
+        openai.api_key = config['openai']['api_key']
+        completion = openai.ChatCompletion.create(
+            model='gpt-3.5-turbo',
+            messages = [
                 {
                     "role": "system",
                     "content": """
@@ -26,11 +27,7 @@ def sentiment_analysis(comment) -> str: # function to perform sentiment analysis
                 }
             ]
         )
-        return completion.choices[0].message['content'] # return the response from the model
-        # choices is a list of objects that contain the response from the model
-        # message is a dictionary that contains the response from the model
-        # content is the key that contains the response from the model
-        # Model result ----> choices ----> message ----> content
+        return completion.choices[0].message['content']
     return "Empty"
 
 
@@ -70,11 +67,6 @@ def start_streaming(spark):
             # This method will block until the query is stopped either by an exception or by invoking query.stop().
 
 
-            # Part2 writing to Kafka
-            # write the data to the Kafka topic
-            kafka_df = stream_df.selectExpr("CAST(review_id AS STRING) AS key", "to_json(struct(*)) AS value")
-
-
             # Send the data to OPENAI for sentiment analysis
             sentiment_analysis_udf = udf(sentiment_analysis, StringType()) # create a user-defined function for sentiment analysis and specify the return type
 
@@ -85,6 +77,12 @@ def start_streaming(spark):
                                             # when() function is used to check a condition and return a value if the condition is true
                                             # otherwise() function is used to return a value if the condition is false
             # Since we modified the stream_df DataFrame schema, we need to update the same in confluent Kafka platform.
+
+
+
+            # Part2 writing to Kafka
+            # write the data to the Kafka topic
+            kafka_df = stream_df.selectExpr("CAST(review_id AS STRING) AS key", "to_json(struct(*)) AS value")
 
             query = (kafka_df.writeStream
                    .format("kafka")
