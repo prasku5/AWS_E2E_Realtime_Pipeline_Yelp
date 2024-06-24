@@ -17,17 +17,12 @@ Server listening for incoming connections on the host: 127.0.0.1 and port: 9999
 
 Now we can submit the job from the spark-worker
 
-docker exec -it spark-worker spark-submit \
+docker exec -it spark-worker spark-submit \  <------------------- This is not working
 --master spark://172.22.0.2:7077 \
 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
 jobs/spark-streaming.py
 
-
-
-
-docker exec -it spark-master /bin/bash
-
-docker exec -it spark-master spark-submit \
+docker exec -it spark-master spark-submit \ < <------------------- This is working ( Also change host as 127.0.0.1 in both programs)
 --master spark://172.18.0.2:7077 \
---packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \ 
 jobs/spark-streaming.py

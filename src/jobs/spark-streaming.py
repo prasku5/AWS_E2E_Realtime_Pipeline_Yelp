@@ -13,7 +13,7 @@ def start_streaming(spark):
         try:
             # read the data from the socket
             stream_df = (spark.readStream.format("socket")
-                        .option("host", "0.0.0.0")
+                        .option("host", "127.0.0.1")
                         .option("port", 9999).load()) # end bracket is because we are writing in multiple lines
 
             # Define the schema for the data    
