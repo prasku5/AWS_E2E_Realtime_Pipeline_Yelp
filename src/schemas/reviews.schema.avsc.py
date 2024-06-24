@@ -27,6 +27,10 @@
     {
       "name": "text",
       "type": "string"
-    }
+    },
+    {
+      "name": "text",
+      "type": "string"
+    } 
   ]
 }
