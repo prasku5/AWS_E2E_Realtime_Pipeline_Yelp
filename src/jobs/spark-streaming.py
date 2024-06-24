@@ -9,26 +9,25 @@ import os
 import sys 
 
 def sentiment_analysis(comment) -> str: # function to perform sentiment analysis
-    if comment:
-       if comment:
-        openai.api_key = config['openai']['api_key']
-        completion = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages = [
+    if comment:  # check if the comment is not empty
+        openai.api_key = config['openai']['api_key'] # set the OpenAI API key from the config file
+        completion = openai.ChatCompletion.create( # create a chat completion object
+            model='gpt-3.5-turbo', # specify the model to use
+            messages = [ # create a list of messages
                 {
-                    "role": "system",
+                    "role": "system", # specify the role of the message and its content. "system" means the message is from the system
                     "content": """
                         You're a machine learning model with a task of classifying comments into POSITIVE, NEGATIVE, NEUTRAL.
                         You are to respond with one word from the option specified above, do not add anything else.
                         Here is the comment:
                         
-                        {comment}
-                    """.format(comment=comment)
+                        {comment}  
+                    """.format(comment=comment) # insert the comment to be classified into the message
                 }
             ]
         )
-        return completion.choices[0].message['content']
-    return "Empty"
+        return completion.choices[0].message['content'] # return the classification result
+    return "Empty"  # return "Empty" if the comment is empty
 
 
 def start_streaming(spark):
