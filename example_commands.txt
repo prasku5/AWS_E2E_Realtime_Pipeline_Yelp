@@ -27,7 +27,6 @@ docker exec -it spark-master spark-submit \ < <------------------- This is worki
 jobs/spark-streaming.py
 
 
-
 result after sentiment analysis using open ai
 {
   "review_id": "pgESDcC7eDx4z_epqon4_Q",
