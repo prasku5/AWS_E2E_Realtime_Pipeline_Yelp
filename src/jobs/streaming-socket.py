@@ -21,7 +21,7 @@ def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
             Send data to the socket
         params:
             file_path: str
-            host: str 
+            host: str   
             port: int
             chunk_size: int 
         return:
@@ -84,11 +84,11 @@ def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
             conn.close()
             print('Connection closed by the server')
 
-if __name__ == '_   _main__':
+if __name__ == '__main__':
     # current_dir = os.path.dirname(os.path.abspath(__file__))
     # file_path = os.path.join(current_dir, '../datasets/yelp_academic_dataset_review.json')
     # send_data_to_socket(file_path=file_path)
-    send_data_over_socket("datasets/yelp_academic_dataset_review.json")
+    send_data_to_socket("datasets/yelp_academic_dataset_review.json")
 
 # Steps
 

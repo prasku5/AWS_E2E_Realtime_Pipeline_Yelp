@@ -28,6 +28,6 @@ jobs/spark-streaming.py
 docker exec -it spark-master /bin/bash
 
 docker exec -it spark-master spark-submit \
---master spark://172.22.0.2:7077 \
+--master spark://172.18.0.2:7077 \
 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
 jobs/spark-streaming.py

@@ -5,20 +5,7 @@ from pyspark.sql.types import StructType, StructField, StringType, FloatType
 from time import sleep
 import os
 import sys 
-
-# Get the directory of the current script
-current_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Construct the path to the parent directory
-parent_dir = os.path.dirname(current_dir)
-
-# Construct the path to the config directory
-config_dir = os.path.join(parent_dir, 'config')
-
-# Add the config directory to the system path
-sys.path.append(config_dir)
-
-from config import config
+from config.config import config
 
 def start_streaming(spark):
     topic = "yelp-reviews"
