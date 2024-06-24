@@ -5,10 +5,10 @@ import pandas as pd
 import os
 
 
-def handle_date(obj):
-    if isinstance(obj, pd.Timestamp):
-        return obj.strftime('%Y-%m-%d %H:%M:%S')
-    raise TypeError("Object of type '%s' is not JSON serializable" % type(obj).__name__)
+def handle_date(obj): # function to handle date serialization
+    if isinstance(obj, pd.Timestamp): # check if the object is a pandas Timestamp
+        return obj.strftime('%Y-%m-%d %H:%M:%S') # return the formatted date. Here we are formatting the date to 'YYYY-MM-DD HH:MM:SS'
+    raise TypeError("Object of type '%s' is not JSON serializable" % type(obj).__name__) # raise a TypeError if the object is not a pandas Timestamp
 
 # send data to the socket
 

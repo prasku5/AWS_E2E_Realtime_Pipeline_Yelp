@@ -42,3 +42,66 @@ The project is designed with the following components:
 - Elasticsearch
 
 Credits to Yusuf Ganiyu( https://github.com/airscholar ) for his contribution to make this project possible. 
+
+
+## Overall architecture in text flow 
+
++----------------------------+
+|   Read JSON File           |
+| from File System           |
++----------------------------+
+                  |
+                  v
++----------------------------+
+|  Create Socket and Bind    |
+|  to Host and Port          |
++----------------------------+
+                  |
+                  v
++----------------------------+
+| Stream Data over Socket    |
++----------------------------+
+                  |
+                  v
++----------------------------+         +----------------------------+
+| Read Data from Socket      |         |      Setup Spark Session   |
+| (Spark Streaming)          +<--------+----------------------------+
++----------------------------+
+                  |
+                  v
++----------------------------+
+|    Parse JSON Data         |
++----------------------------+
+                  |
+                  v
++----------------------------+
+| Perform Sentiment Analysis |
+| using OpenAI API           |
++----------------------------+
+                  |
+                  v
++----------------------------+
+| Update DataFrame with      |
+| sentiment results          |
++----------------------------+
+                  |
+                  v
++----------------------------+
+| Write processed data to    |
+| Kafka                      |
++----------------------------+
+                  |
+                  v
++----------------------------+
+| Handle exceptions          |
++----------------------------+
+                  |
+                  v
++----------------------------+
+| Wait and retry             |
++----------------------------+
+                  |
+                  v
++----------------------------+
+|           End              |
++----------------------------+
