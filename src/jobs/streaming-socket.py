@@ -15,7 +15,7 @@ def handle_date(obj):
 # Host is the IP address of the server
 # Port is the port number on the server
 # Chunk size is the number of bytes to send at a time to the server
-def send_data_to_socket(file_path, host="127.0.0.1", port=9999, chunk_size=2):
+def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
     '''
         docstring: 
             Send data to the socket

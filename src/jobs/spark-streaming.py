@@ -29,7 +29,6 @@ def start_streaming(spark):
                         .option("host", "0.0.0.0")
                         .option("port", 9999).load()) # end bracket is because we are writing in multiple lines
 
-
             # Define the schema for the data    
             schema = StructType([
                 StructField("review_id", StringType()),
