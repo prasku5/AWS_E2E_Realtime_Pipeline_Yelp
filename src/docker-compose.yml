@@ -53,4 +53,6 @@ services:
 #    <<: *worker
 networks:
   spark-network:
-    driver: bridge
+    driver: bridge # to be able to communicate between containers in the same network 
+    # we will specify the driver as bridge cause we are working on a single machine
+    # if we were working on a cluster we would use overlay driver which will allow us to communicate between containers in different machines

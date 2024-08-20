@@ -2,7 +2,7 @@
 
 FROM bitnami/spark:latest 
 
-COPY requirements.txt .
+COPY requirements.txt . 
 
 USER root
 
