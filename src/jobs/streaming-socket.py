@@ -12,9 +12,9 @@ def handle_date(obj): # function to handle date serialization
 
 # send data to the socket
 
-# Host is the IP address of the server
-# Port is the port number on the server
-# Chunk size is the number of bytes to send at a time to the server
+# Host is the IP address of the server where the socket is running
+# Port is the port number on the server where the socket is listening 
+# Chunk size is the number of bytes to send at a time to the server from the file 
 def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
     '''
         docstring: 
@@ -29,8 +29,9 @@ def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
     '''
     # create a socket object
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # AF_INET is the address family for IPv4
-    # SOCK_STREAM is the socket type for TCP
+    # AF_INET is the address family for IPv4 - This will allow us to use an "IP address" to connect to the server
+    # SOCK_STREAM is the socket type for TCP - This will allow us to stream data over the internet. it will ensure that the data is delivered in the order it was sent and that it is error-free.
+    # we need both to create a socket object because we are going to stream data over the internet using an IP address and TCP   
     # IPv4 and TCP are the most common protocols for streaming data over the internet
     # we need both to create a socket object
       
@@ -44,7 +45,8 @@ def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
 
     s.listen(1)     # listen for incoming connections
 
-    print('Server listening for incoming connections on the host:', host, 'and port:', port)    
+    print('Server listening for incoming connections on the host:', host, 'and port:', port) 
+    # so we created a socket object and bind it to the host and port and it will listen for incoming connections using a server   
 
     last_sent_index = 0
 
@@ -59,22 +61,53 @@ def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
         try:
             with open(file_path, 'r') as file:
                 # skip the lines that are already read
-                for _ in range(last_sent_index):
+                for _ in range(last_sent_index): # It will be able to skip since we are using the _ variable to iterate over the range
+                    # _ is a throwaway variable in Python. It is used when you don't need the variable in the loop.
                     next(file) # for loop used to skip the lines that are already read
                 
+                # File Content After Skipping:
+                # +---------------------------------------------------------------+
+                # | [Skipped] Line 1                                              |
+                # | [Skipped] Line 2                                              |
+                # | [Skipped] Line 3                                              |
+                # | Line 4  <--- File Pointer Starts Here                         |
+                # | Line 5                                                       |
+                # | Line 6                                                       |
+                # | ...                                                           |
+                # | Line N                                                       |
+                # +---------------------------------------------------------------+
+
                 records = [] # create a list to hold records
 
                 for line in file:
-                    records.append(json.loads(line)) # append each line to the records list
+                    records.append(json.loads(line)) # append each line to the records list - converting json to python dictionary
                     if len(records) == chunk_size: # check if the size of the records list equals the chunk size
                         chunk = pd.DataFrame(records) # convert the records list to a DataFrame
+
+                        # we are converting to a DataFrame because it is easier to work with data in a tabular format
+                        
+                        # For example chunk looks like this:
+                        # +---------------------------------------------------------------+
+                        # |  Column 1  |  Column 2  |  Column 3  |  ...  |  Column N  |
+                        # +---------------------------------------------------------------+
+                        # |  Value 1   |  Value 2   |  Value 3   |  ...  |  Value N   |
+                        # |  Value 1   |  Value 2   |  Value 3   |  ...  |  Value N   |
+                        # |  Value 1   |  Value 2   |  Value 3   |  ...  |  Value N   |
+                        # |  ...       |  ...       |  ...       |  ...  |  ...       |
+
                         print(chunk) # print the chunk
                         for record in chunk.to_dict(orient='records'): # convert the DataFrame to a dictionary
+                            
                             serialized_data = json.dumps(record, default=handle_date).encode('utf-8') # serialize the record to JSON
+                            # encode utf-8 is used to convert the string to bytes. utf-8 is the most common encoding used for text data.
+                            # handle the date serialization using the handle_date function
+                            # default parameter is used to specify a function to handle the serialization of non-standard objects
+                            # in our datagframe we have a pandas Timestamp object which is a non-standard object for JSON serialization.
+                              
                             conn.send(serialized_data + b'\n') # circuit will wait for b'\n' to know that the data is complete
                             # Then it will process the data and send the response back to the client.
-                            time.sleep(5)
-                            last_sent_index += 1
+                            time.sleep(5) # wait for 5 seconds before sending the next chunk of data to the client 
+                            last_sent_index += 1 # increment the last_sent_index by 1 since we have sent the data in the chunk
 
                         records = [] # clear the records list after sending the data in the chunk
 
@@ -119,27 +152,27 @@ if __name__ == '__main__':
 #               |
 #               v
 # +---------------------------+
-# |   Create socket object    |
+# |   Create socket object    | --> socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
 # +---------------------------+
 #               |
 #               v
 # +---------------------------+
-# | Bind socket to host/port  |
+# | Bind socket to host/port  | --> socket.bind((host, port)) 
 # +---------------------------+
 #               |
 #               v
 # +---------------------------+
-# | Listen for connections    |
+# | Listen for connections    | ---> socket.listen(1) 
 # +---------------------------+
 #               |
 #               v
 # +---------------------------+
-# |  Accept client connection |
+# |  Accept client connection | --> socket.accept()
 # +---------------------------+
 #               |
 #               v
 # +---------------------------+
-# | Open file in read mode    |
+# | Open file in read mode    | 
 # +---------------------------+
 #               |
 #               v
@@ -159,7 +192,7 @@ if __name__ == '__main__':
 #               |
 #               v
 # +---------------------------+
-# | Append line to records list|
+# | Append line to records list| 
 # +---------------------------+
 #               |
 #               v
@@ -178,12 +211,12 @@ if __name__ == '__main__':
 #               |
 #               v
 # +---------------------------+
-# | Convert to dict           |
+# | Convert to dict           | --> DataFrame.to_dict(orient='records')
 # +---------------------------+
 #               |
 #               v
 # +---------------------------+
-# | Serialize to JSON         |
+# | Serialize to JSON         | 
 # +---------------------------+
 #               |
 #               v
@@ -198,7 +231,7 @@ if __name__ == '__main__':
 #               |
 #               v
 # +---------------------------+
-# | Increment last_sent_index |
+# | Increment last_sent_index | 
 # +---------------------------+
 #               |
 #               v
