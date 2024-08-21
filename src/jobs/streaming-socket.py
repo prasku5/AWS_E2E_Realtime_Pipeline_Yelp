@@ -29,8 +29,13 @@ def send_data_to_socket(file_path, host="localhost", port=9999, chunk_size=2):
     '''
     # create a socket object
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # AF_INET is the address family for IPv4 - This will allow us to use an "IP address" to connect to the server
+    
+    # AF_INET is the address family for IPv4 - This will allow us to use an "IP address" to connect to the server, when we mean server here we are referring to the socket server.
+
     # SOCK_STREAM is the socket type for TCP - This will allow us to stream data over the internet. it will ensure that the data is delivered in the order it was sent and that it is error-free.
+    
+    # so we are creating a socket object that will stream data over the internet using an IP address and TCP protocol.
+    
     # we need both to create a socket object because we are going to stream data over the internet using an IP address and TCP   
     # IPv4 and TCP are the most common protocols for streaming data over the internet
     # we need both to create a socket object
